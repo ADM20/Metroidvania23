@@ -37,6 +37,14 @@ class AMetroidvania23Character : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* LookAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* DashAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ability | Dash", meta = (AllowPrivateAccess = "true"))
+		int DashForce;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ability | Dash", meta = (AllowPrivateAccess = "true"))
+		float MaxDashCooldown;
 public:
 	AMetroidvania23Character();
 	
@@ -49,6 +57,7 @@ protected:
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
 			
+	void Dash(const FInputActionValue& Value);
 
 protected:
 	// APawn interface
@@ -57,10 +66,21 @@ protected:
 	// To add mapping context
 	virtual void BeginPlay();
 
+	virtual void Tick(float DeltaTime);
+
 public:
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+private:
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ability | Dash", meta = (AllowPrivateAccess = "true"))
+	bool IsDashOnCooldown;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ability | Dash", meta = (AllowPrivateAccess = "true"))
+	float DashCooldownTimer;
+
+	int DashAmount;
 };
 

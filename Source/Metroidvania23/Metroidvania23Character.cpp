@@ -49,6 +49,13 @@ AMetroidvania23Character::AMetroidvania23Character()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+
+	//Initialise dash variables
+	DashForce = 10.0f;
+	DashAmount = 0.0f;
+	IsDashOnCooldown = false;
+	MaxDashCooldown = 10.0f;
+
 }
 
 void AMetroidvania23Character::BeginPlay()
@@ -64,6 +71,26 @@ void AMetroidvania23Character::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
+}
+
+void AMetroidvania23Character::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	if (IsDashOnCooldown)
+	{
+		if (DashCooldownTimer < MaxDashCooldown)
+		{
+			DashCooldownTimer += DeltaTime * 1.0f;
+		}
+		else
+		{
+			DashCooldownTimer = 0.0f;
+			DashAmount = 0;
+			IsDashOnCooldown = false;
+		}
+	}
+
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -84,6 +111,7 @@ void AMetroidvania23Character::SetupPlayerInputComponent(class UInputComponent* 
 		//Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AMetroidvania23Character::Look);
 
+		EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Triggered, this, &AMetroidvania23Character::Dash);
 	}
 
 }
@@ -121,6 +149,37 @@ void AMetroidvania23Character::Look(const FInputActionValue& Value)
 		// add yaw and pitch input to controller
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
+	}
+}
+
+//Currently works so that the player will dash in the direction they are travelling in dictated by the velocity. We can change this to be the dictated by the input instead if that is more traditional to the genre
+void AMetroidvania23Character::Dash(const FInputActionValue& Value)
+{
+
+	if (DashAmount <= 2)
+	{
+		//Get the player input through the velocity direction
+		FVector InputDir = GetVelocity();
+		// 0 the up axis so the player can't dash upwards
+		InputDir.Z = 0.0f;
+
+		//Multiply the direction by the dash force to determine how far the player dashes
+		InputDir *= DashForce;
+
+		//Check to make sure the player character is in the scene and then launch them in the direction they are travelling in
+		if (Controller != nullptr)
+		{
+			LaunchCharacter(InputDir, false, false);
+			DashAmount++;
+
+			if (DashAmount == 3)
+			{
+				IsDashOnCooldown = true;
+			}
+
+		}
+
+
 	}
 }
 
