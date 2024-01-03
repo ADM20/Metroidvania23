@@ -14,7 +14,7 @@ struct FPlayerStats
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int HP = 10;
 };
 
