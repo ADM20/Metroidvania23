@@ -8,6 +8,16 @@
 #include "Metroidvania23Character.generated.h"
 
 
+// Player Stats
+USTRUCT(BlueprintType)
+struct FPlayerStats
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(BlueprintReadWrite)
+	int HP = 10;
+};
+
 UCLASS(config=Game)
 class AMetroidvania23Character : public ACharacter
 {
@@ -45,6 +55,11 @@ class AMetroidvania23Character : public ACharacter
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ability | Dash", meta = (AllowPrivateAccess = "true"))
 		float MaxDashCooldown;
+
+	// Player Stats
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stats", meta = (AllowPrivateAccess = "true"))
+		FPlayerStats Stats;
+
 public:
 	AMetroidvania23Character();
 	
@@ -67,6 +82,7 @@ protected:
 	virtual void BeginPlay();
 
 	virtual void Tick(float DeltaTime);
+
 
 public:
 	/** Returns CameraBoom subobject **/
