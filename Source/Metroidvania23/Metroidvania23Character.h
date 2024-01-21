@@ -57,7 +57,7 @@ class AMetroidvania23Character : public ACharacter
 		float MaxDashCooldown;
 
 	// Player Stats
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stats", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats", meta = (AllowPrivateAccess = "true"))
 		FPlayerStats Stats;
 
 public:
